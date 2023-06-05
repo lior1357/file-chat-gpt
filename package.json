@@ -1,0 +1,16 @@
+{
+  "name": "new-chat-gpt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^2.0.22",
+    "pdf-parse": "^1.1.1",
+    "redis": "^4.6.7"
+  }
+}
