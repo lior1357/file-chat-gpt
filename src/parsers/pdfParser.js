@@ -4,35 +4,18 @@ const pdf = require('pdf-parse')
 const config = require('../config')
 
 class PDFFileParser extends FileParser {
-    constructor(filePath) {
-        super(filePath)
+    constructor(filePath, chatID) {
+        super(filePath, chatID)
     }
     
-
     async read() {
         try {
             const data = await pdf(this.buffer)
-            return data
+            return data.text
         }
         catch(e) {      
-            console.log('error reading file', e)
+            throw new Error(e)
         }      
-    }
-    
-    async splitStringToList() {
-        const textFile = this.read()
-        console.log(await textFile)
-        const symbolsToSplit = [',', ';', ':', '.', '!', '?', '-', ''];
-          
-          // Splitting the string by symbols
-          const splitText = textFile.split(new RegExp(`[${symbolsToSplit.join('')}]`));
-          console.log(splitText);
-          
-    }
-
-    parse() {
-
-         
     }
 }
 
