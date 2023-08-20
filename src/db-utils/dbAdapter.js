@@ -1,13 +1,11 @@
-const IDBAdapter = require('./IdbAdapter');
 const DB =require('./db');
 const crypto =  require('crypto');
 const { SchemaFieldTypes, VectorAlgorithms } = require('redis');
 const KeyStructureManager = require('./keyStructureManager')
 
-class DBAdapter extends IDBAdapter {
+class DBAdapter  {
     constructor(embeddingTransform) {
-        super()
-        this.db = new DB()
+        this.db = new DB();
         this.keyStructureManager = new KeyStructureManager();
         this.embeddingTransform = embeddingTransform;
     }
@@ -69,15 +67,6 @@ class DBAdapter extends IDBAdapter {
         await this.db.addToList(key, message); 
     }
 
-    async set(object) {
-        const { key, value } = this.convertToRedisKeyFormat(object)
-        this.db.set(key, value);
-    }
-
-    async get() {
-        throw new Error('get() function is not implemented');
-    }
-
     async findAnswerForQuery(stringQuery, chatID, numberOfResults) {
         const indexKey =  this.keyStructureManager.getVectorIndexKey(chatID);
         const { embeddedSentence } = await this.embeddingTransform.embed(stringQuery);
@@ -90,14 +79,9 @@ class DBAdapter extends IDBAdapter {
         const messageKeyStorage = this.keyStructureManager.getMessageStorageKey(chatID, indexFrom, numberOfMessages)
     }
 
-    async delete() {
-        throw new Error('delete() function is not implemented');
-    }
-
     quit() {
         this.db.quit();
     }
-
 
     _hashVector(vectorEmbedding) {
         const buffer = vectorEmbedding.dataSync();

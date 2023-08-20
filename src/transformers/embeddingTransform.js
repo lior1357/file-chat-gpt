@@ -1,6 +1,5 @@
-const { Transform } = require('stream');
 require('@tensorflow/tfjs-node');  // Import the backend
-const tfBackend = require('../config').tensorFlowBackend;
+const tfBackend = require('../config/config.json').tensorFlowBackend;
 const tf = require('@tensorflow/tfjs');
 
 tf.setBackend(tfBackend);
