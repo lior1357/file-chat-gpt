@@ -1,7 +1,6 @@
 const FileParser = require('./fileParser')
-const fs = require('fs')
 const pdf = require('pdf-parse')
-const config = require('../config')
+
 
 class PDFFileParser extends FileParser {
     constructor(filePath, chatID) {

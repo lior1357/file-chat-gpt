@@ -1,6 +1,5 @@
-const { createClient, SchemaFieldTypes, VectorAlgorithms }  = require('redis');
-const KeyStructureManager = require('./keyStructureManager');
-const redisURL = require('../config.json').redisURL;
+const { createClient }  = require('redis');
+const redisURL = require('../config/config.json').redisURL;
 
 class RedisDB {
     constructor() {
