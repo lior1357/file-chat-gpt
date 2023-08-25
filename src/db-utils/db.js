@@ -26,7 +26,7 @@ class RedisDB {
     }
 
     async getFromListByIndex(messageStorageKey, indexLast, numOfElements) {
-        const indexStart = indexLast - numOfElements;
+        const indexStart = indexLast - numOfElements + 1;
         return await this.client.lRange(messageStorageKey, indexStart, indexLast);
     }
     

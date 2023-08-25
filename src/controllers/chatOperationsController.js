@@ -74,9 +74,13 @@ class ChatOperationsController {
         
         return {stringQuery, stringAnswer};
     }
+
+    async getChatMessages(lastMessageIndex, numberOfMessages) {
+        return await this.dbAdapter.getMessagesByMessageIndex(this.chatID, lastMessageIndex, numberOfMessages)
+    }
 }
 
-module.exports = ChatOperationsController
+module.exports = ChatOperationsController;
 ;
 
 
