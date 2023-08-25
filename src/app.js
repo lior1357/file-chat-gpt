@@ -7,8 +7,21 @@ const toggleManager = require('./config/toggleManager.json');
 const universalSentenceEncoder = require('@tensorflow-models/universal-sentence-encoder');
 const EmbeddingTransform = require('./transformers/embeddingTransform');
 const ChatOperationsController = require('./controllers/chatOperationsController');
+const express = require('express');
+
+const app = express();
+const PORT = 3000;
 
 
+app.get("/", (req, res) => {
+    res.send("Hi")
+})
+
+
+
+app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}...`)
+})
 // console.log(embeddedFile)
 async function loadFile(chatDependencies, chatID, filePath) {
     const chatOperationsController = new ChatOperationsController(chatDependencies, chatID);
@@ -56,6 +69,8 @@ async function searchTest() {
     
     await search(chatDependencies, chat1.chatID, "tell me about that volunteer state");
     await search(chatDependencies, chat1.chatID, "What are the essays based on?");
+    const chatMessages = await chat1.getChatMessages(3, 2);
+    console.log(chatMessages);
     
     if(toggleManager.redisToggle) {
         chatDependencies.dbAdapter.quit()

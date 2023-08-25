@@ -24,6 +24,7 @@ class DBAdapter  {
                 type: SchemaFieldTypes.TEXT,
                 AS: 'text',
               },
+              
             'vector': {
                 type: SchemaFieldTypes.VECTOR,
                 ALGORITHM: VectorAlgorithms.HNSW,
@@ -75,8 +76,10 @@ class DBAdapter  {
         return await this.db.vectorSearch(searchableVector, indexKey, numberOfResults, 'vector', ['text'])
     }
 
-    async getMessagesByMessageIndex(chatID, indexFrom, numberOfMessages) {
-        const messageKeyStorage = this.keyStructureManager.getMessageStorageKey(chatID, indexFrom, numberOfMessages)
+    async getMessagesByMessageIndex(chatID,  indexLast, numberOfMessages) {
+        const messageKeyStorage = this.keyStructureManager.getMessageStorageKey(chatID);
+        const messages = await this.db.getFromListByIndex(messageKeyStorage, indexLast, numberOfMessages);
+        return messages;
     }
 
     quit() {
