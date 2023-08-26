@@ -2,8 +2,9 @@ const DB =require('./db');
 const crypto =  require('crypto');
 const { SchemaFieldTypes, VectorAlgorithms } = require('redis');
 const KeyStructureManager = require('./keyStructureManager')
+const IDBAdapter = require('./IDBadapter');
 
-class DBAdapter  {
+class DBAdapter extends IDBAdapter{
     constructor(embeddingTransform) {
         this.db = new DB();
         this.keyStructureManager = new KeyStructureManager();
@@ -73,7 +74,13 @@ class DBAdapter  {
         const { embeddedSentence } = await this.embeddingTransform.embed(stringQuery);
         const searchableVector = this.convertEmbeddingToFloat64(embeddedSentence);
 
-        return await this.db.vectorSearch(searchableVector, indexKey, numberOfResults, 'vector', ['text'])
+        const vectorSearchResults  = await this.db.vectorSearch(searchableVector, indexKey, numberOfResults, 'vector', ['text'])
+
+        const documents = vectorSearchResults.documents;
+        const stringAnswerArray = documents.map((document) => document['value']['text'])
+        const stringAnswer = stringAnswerArray.join('\n')
+
+        return stringAnswer
     }
 
     async getMessagesByMessageIndex(chatID,  indexLast, numberOfMessages) {

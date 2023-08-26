@@ -1,27 +1,29 @@
-const Mapper = require('./db-utils/data-structures/hashMap');
-const ListMapper = require('./db-utils/data-structures/listHashMap');
-const MapperAdapter = require('./db-utils/mapperAdapter');
+
 const DBAdapter = require('./db-utils/dbAdapter');
+const ObjectDBAdapter = require('./db-utils/objectDBAdapter');
 const config = require('./config/config.json');
 const toggleManager = require('./config/toggleManager.json');
 const universalSentenceEncoder = require('@tensorflow-models/universal-sentence-encoder');
 const EmbeddingTransform = require('./transformers/embeddingTransform');
 const ChatOperationsController = require('./controllers/chatOperationsController');
-const express = require('express');
 
-const app = express();
-const PORT = 3000;
+// const express = require('express');
+// const bodyParser = require('body-parser');
+
+// const app = express();
+// const PORT = 3000;
+
+// app.use(bodyParser.urlencoded({extended: true})) 
+// app.use(bodyParser.json())
+
+// app.listen(PORT, () => {
+//     console.log(`Listening on port ${PORT}...`)
+// })
+
+// initRoutes().then(console.log("routes initizalized"))
 
 
-app.get("/", (req, res) => {
-    res.send("Hi")
-})
 
-
-
-app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}...`)
-})
 // console.log(embeddedFile)
 async function loadFile(chatDependencies, chatID, filePath) {
     const chatOperationsController = new ChatOperationsController(chatDependencies, chatID);
@@ -39,24 +41,19 @@ async function search(chatDependencies, chatID, query) {
 }
 
 async function initializeChatDependencies() {
-
-    const vectorToSentenceMapper = new Mapper();
-    const chatToVectorIndexMapper = new Mapper();
-    const messageStorage = new ListMapper();
-
-    const vectorToSentenceMapperAdapter = new MapperAdapter(vectorToSentenceMapper, isVectorKey=true);
-    const chatToVectorIndexMapperAdapter = new MapperAdapter(chatToVectorIndexMapper);
     const loadedModel = await loadModel()
     const embeddingTransform = new EmbeddingTransform(loadedModel);
+    let dbAdapter
 
     if (toggleManager.redisToggle === true) {
-        const dbAdapter = new DBAdapter(embeddingTransform);
+        dbAdapter = new DBAdapter(embeddingTransform);
         await dbAdapter.connect()
-
-        return { embeddingTransform, dbAdapter, redisToggle: toggleManager.redisToggle }
+    }
+    else {
+        dbAdapter = new ObjectDBAdapter(embeddingTransform)
     }
 
-    return { messageStorage, vectorToSentenceMapperAdapter, chatToVectorIndexMapperAdapter, embeddingTransform, redisToggle: toggleManager.redisToggle }
+    return { embeddingTransform, dbAdapter } 
 }
 
 async function searchTest() {
@@ -75,11 +72,13 @@ async function searchTest() {
     if(toggleManager.redisToggle) {
         chatDependencies.dbAdapter.quit()
     }
-
-    else{
-        console.log(chatDependencies.messageStorage)
-    }
-    
 }
+
+async function initRoutes() {
+    const dependencies = await initializeChatDependencies();
+    app.post('/chat/load', loadFileReq(dependencies));
+
+}
+
 
 searchTest();
