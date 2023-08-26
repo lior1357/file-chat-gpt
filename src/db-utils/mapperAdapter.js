@@ -1,4 +1,4 @@
-const crypto = require('crypto')
+const crypto = require('crypto');
 
 class MapperAdapter {
     constructor(mapperObject, isVectorKey=false) {
@@ -25,8 +25,6 @@ class MapperAdapter {
         const hashedValue = crypto.createHash('sha256').update(buffer).digest('hex');
         return hashedValue;
     }
-
-
 }
 
 module.exports = MapperAdapter;
