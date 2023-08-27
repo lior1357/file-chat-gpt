@@ -10,7 +10,7 @@ class ObjectDBAdapter extends IDBAdapter {
         super();
         const vectorToSentenceMapper = new Mapper();
         const chatToVectorIndexMapper = new Mapper();
-        
+
         this.embeddingTransform = embeddingTransform;
         this.messageStorage = new ListMapper();
         this.vectorToSentenceMapperAdapter = new MapperAdapter(vectorToSentenceMapper, true);
@@ -50,7 +50,6 @@ class ObjectDBAdapter extends IDBAdapter {
 
     async findAnswerForQuery(stringQuery, chatID, numberOfResults) {
         const vectorIndex = await this.getVectorIndex(chatID);
-        console.log(vectorIndex);
         const vectorSearchResults =  await vectorIndex.search(stringQuery, numberOfResults); //searching for answer to query
         const stringifiedSearchResults = vectorSearchResults.map((embedding) => this.vectorToSentenceMapperAdapter.get(embedding));
         const answerArray = await Promise.all(stringifiedSearchResults);

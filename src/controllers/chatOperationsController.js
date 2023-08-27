@@ -31,7 +31,7 @@ class ChatOperationsController {
     };
 
 
-    async vectorSearchAnswerForQuery(stringQuery) {
+    async findAnswerForQuery(stringQuery) {
         const stringAnswer = await this.dbAdapter.findAnswerForQuery(stringQuery, this.chatID, 3);
 
         this.dbAdapter.addChatMessage(this.chatID, stringQuery);
@@ -41,7 +41,7 @@ class ChatOperationsController {
     }
 
     async getChatMessages(lastMessageIndex, numberOfMessages) {
-        return await this.dbAdapter.getMessagesByMessageIndex(this.chatID, lastMessageIndex, numberOfMessages)
+        return await this.dbAdapter.getMessagesByMessageIndex(this.chatID, numberOfMessages, lastMessageIndex)
     }
 }
 

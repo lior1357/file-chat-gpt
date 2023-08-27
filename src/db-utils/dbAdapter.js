@@ -4,8 +4,10 @@ const { SchemaFieldTypes, VectorAlgorithms } = require('redis');
 const KeyStructureManager = require('./keyStructureManager')
 const IDBAdapter = require('./IDBadapter');
 
+
 class DBAdapter extends IDBAdapter{
     constructor(embeddingTransform) {
+        super();
         this.db = new DB();
         this.keyStructureManager = new KeyStructureManager();
         this.embeddingTransform = embeddingTransform;
@@ -83,7 +85,7 @@ class DBAdapter extends IDBAdapter{
         return stringAnswer
     }
 
-    async getMessagesByMessageIndex(chatID,  indexLast, numberOfMessages) {
+    async getMessagesByMessageIndex(chatID, numberOfMessages, indexLast=undefined) {
         const messageKeyStorage = this.keyStructureManager.getMessageStorageKey(chatID);
         const messages = await this.db.getFromListByIndex(messageKeyStorage, indexLast, numberOfMessages);
         return messages;

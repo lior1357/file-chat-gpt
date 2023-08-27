@@ -25,9 +25,24 @@ class RedisDB {
         await this.client.rPush(key, element)
     }
 
-    async getFromListByIndex(messageStorageKey, indexLast, numOfElements) {
-        const indexStart = indexLast - numOfElements + 1;
-        return await this.client.lRange(messageStorageKey, indexStart, indexLast);
+    async getFromListByIndex(messageStorageKey, numOfElements, indexLast=undefined) {
+        let indexStart
+
+        if (indexLast === -1) {
+            return {elements: [], lastElementIndex: -1}
+        }
+
+        if (indexLast === undefined) {
+            indexLast = await this.client.lLen(messageStorageKey);    
+        }
+
+        indexStart = indexLast - numOfElements < 0 ? 0 : indexLast - numOfElements
+        
+        console.log(indexStart, indexLast)
+        const elements = await this.client.lRange(messageStorageKey, indexStart, indexLast);
+        const lastElementIndex = indexStart - 1
+
+        return { elements, lastElementIndex }
     }
     
     async createIndex(indexName, indexParams, indexAdditionalParams) {
@@ -38,14 +53,6 @@ class RedisDB {
         return await this.client.exists(key);
     }
     
-
-    async set(key, value) {
-         await this.client.set(key, value)
-    }
-
-    async get(key) {
-        
-    }
 
     async vectorSearch(float64ArrayBufferVector,  indexKey, numberOfResults, vectorHashField, fieldsToReturn) {
         const results = this.client.ft.search(indexKey, `*=>[KNN ${numberOfResults} @${vectorHashField} $BLOB AS dist]`, {
