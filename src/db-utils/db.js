@@ -28,17 +28,14 @@ class RedisDB {
     async getFromListByIndex(messageStorageKey, numOfElements, indexLast=undefined) {
         let indexStart
 
-        if (indexLast === -1) {
+        if (indexLast === -1) 
             return {elements: [], lastElementIndex: -1}
-        }
 
-        if (indexLast === undefined) {
+        if (indexLast === undefined) 
             indexLast = await this.client.lLen(messageStorageKey);    
-        }
 
         indexStart = indexLast - numOfElements < 0 ? 0 : indexLast - numOfElements
         
-        console.log(indexStart, indexLast)
         const elements = await this.client.lRange(messageStorageKey, indexStart, indexLast);
         const lastElementIndex = indexStart - 1
 
